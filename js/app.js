@@ -1,11 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ========================
-    // SUBSTITUA AQUI PELA URL DA SUA CLOUD FUNCTION
-    // ========================
     const CLOUD_FUNCTION_URL = 'https://proxy-ficha-coletiva-327419300290.southamerica-east1.run.app/';
 
-    // ---- Dados estáticos ----
     const escolas = [
         "CEEFMTI Afonso Cláudio", "CEEFMTI Elisa Paiva", "EEEF Ivana Casagrande Scabelo", "EEEF Severino Paste",
         "EEEFM Alto Rio Possmoser", "EEEFM Álvaro Castelo", "EEEFM Domingos Perim", "EEEFM Elvira Barros",
@@ -43,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "Lançamento de disco", "Salto em distância"
     ];
 
-    // ---- Elementos do DOM ----
     const selectModalidade = document.getElementById('modalidade');
     const grupoSubmodalidade = document.getElementById('grupo-submodalidade');
     const selectSubmodalidade = document.getElementById('submodalidade');
@@ -55,35 +50,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form-ficha');
     const statusDiv = document.getElementById('status-mensagem');
 
-    /**
-     * Converte um nome para o formato "José da Silva":
-     * - Primeira letra de cada palavra em maiúscula
-     * - Exceto preposições/artigos como "da", "de", "do", "das", "dos", "e"
-     * - Mas se a palavra for a primeira do nome, sempre maiúscula
-     */
     function capitalizarNome(nome) {
-    const excecoes = ['da', 'de', 'do', 'das', 'dos', 'e'];
-    return nome
-        .toLowerCase()
-        .split(/\s+/)
-        .map((palavra, index) => {
-        if (index === 0 || !excecoes.includes(palavra)) {
-            return palavra.charAt(0).toUpperCase() + palavra.slice(1);
-        }
-        return palavra;
-        })
-        .join(' ');
+        const excecoes = ['da', 'de', 'do', 'das', 'dos', 'e'];
+        return nome
+            .toLowerCase()
+            .split(/\s+/)
+            .map((palavra, index) => {
+                if (index === 0 || !excecoes.includes(palavra)) {
+                    return palavra.charAt(0).toUpperCase() + palavra.slice(1);
+                }
+                return palavra;
+            })
+            .join(' ');
     }
 
-    // ---- Preencher selects ----
     function popularSelect(select, opcoes, textoDefault = 'Selecione...') {
-        // 👇 Adiciona opção vazia padrão
         const optDefault = document.createElement('option');
         optDefault.value = '';
         optDefault.textContent = textoDefault;
         select.appendChild(optDefault);
 
-        // Preenche as demais opções
         opcoes.forEach(op => {
             const opt = document.createElement('option');
             opt.value = op;
@@ -96,19 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
     popularSelect(selectEscola, escolas, 'Selecione a escola...');
     popularSelect(selectSubmodalidade, submodalidades, 'Selecione a submodalidade');
 
-    // Data atual formato dd/mm/aaaa
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, '0');
     const mes = String(hoje.getMonth() + 1).padStart(2, '0');
     const ano = hoje.getFullYear();
     inputData.value = `${dia}/${mes}/${ano}`;
 
-    // Atualiza diretor ao trocar escola
     selectEscola.addEventListener('change', () => {
         inputDiretor.value = diretores[selectEscola.value] || '';
     });
 
-    // Mostra/oculta submodalidade conforme Atletismo
     selectModalidade.addEventListener('change', () => {
         if (selectModalidade.value === 'Atletismo') {
             grupoSubmodalidade.style.display = 'flex';
@@ -117,27 +100,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    
-    // ---- Gerenciar lista de alunos ----
     function criarLinhaAluno(numero) {
-    const div = document.createElement('div');
-    div.className = 'aluno-linha';
-    div.innerHTML = `
-        <input type="text" placeholder="Nome do aluno ${numero}" class="aluno-nome" required>
-        <input type="text" placeholder="Documento com foto" class="aluno-documento" required>
-        <input type="date" class="aluno-data-matricula input-matricula" required>
-        <input type="text" placeholder="ID do aluno" class="aluno-identidade" required>
-        <input type="date" class="aluno-data-nascimento input-nascimento" required>
-        <select class="aluno-publico-aee" required>
-            <option value="">Público AEE</option>
-            <option value="Sim">Sim</option>
-            <option value="Não">Não</option>
-        </select>
-        <button type="button" class="remover-aluno">✕</button>
-    `;
-    div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
-    return div;
-}
+        const div = document.createElement('div');
+        div.className = 'aluno-linha';
+        div.innerHTML = `
+            <input type="text" placeholder="Nome do aluno ${numero}" class="aluno-nome" required>
+            <input type="text" placeholder="Documento com foto" class="aluno-documento" required>
+            <input type="date" class="aluno-data-matricula input-matricula" required>
+            <input type="text" placeholder="ID do aluno" class="aluno-identidade" required>
+            <input type="date" class="aluno-data-nascimento input-nascimento" required>
+            <select class="aluno-publico-aee" required>
+                <option value="">Público AEE</option>
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+            </select>
+            <button type="button" class="remover-aluno">✕</button>
+        `;
+        div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
+        return div;
+    }
 
     btnAdicionar.addEventListener('click', () => {
         const total = listaAlunos.querySelectorAll('.aluno-linha').length;
@@ -148,16 +129,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Inicia com 3 linhas
     for (let i = 0; i < 3; i++) {
         listaAlunos.appendChild(criarLinhaAluno(i + 1));
     }
 
-        // ---- Envio do formulário ----
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Validações básicas
         if (!selectEscola.value) {
             alert('Selecione a escola.');
             return;
@@ -175,16 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Monta modalidade (inclui submodalidade se for Atletismo)
         let modalidade = selectModalidade.value;
         if (modalidade === 'Atletismo') {
             modalidade = `Atletismo - ${selectSubmodalidade.value}`;
         }
 
-        // Obtém a lista de alunos UMA ÚNICA VEZ
         const linhasAlunos = listaAlunos.querySelectorAll('.aluno-linha');
 
-        // Validação de obrigatoriedade dos alunos
         for (const linha of linhasAlunos) {
             const inputs = linha.querySelectorAll('input');
             const selectPublico = linha.querySelector('.aluno-publico-aee');
@@ -215,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Coleta os dados dos alunos (usando a mesma variável 'linhasAlunos')
         const alunos = [];
         const formatarData = (dataISO) => {
             if (!dataISO) return '';
@@ -279,3 +253,5 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error(error);
         }
     });
+
+});
