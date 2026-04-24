@@ -120,31 +120,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const div = document.createElement('div');
     div.className = 'aluno-linha';
     div.innerHTML = `
-        <div class="campo nome">
-            <input type="text" placeholder="Nome do aluno ${numero}" class="aluno-nome" required>
-        </div>
-        <div class="campo doc">
-            <input type="text" placeholder="Documento com foto" class="aluno-documento" required>
-        </div>
-        <div class="campo data-matricula">
-            <span class="label-data">Matrícula</span>
-            <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-matricula input-matricula" maxlength="10" required>
-        </div>
-        <div class="campo id-aluno">
-            <input type="text" placeholder="ID do aluno" class="aluno-identidade" required>
-        </div>
-        <div class="campo data-nascimento">
-            <span class="label-data">Nascimento</span>
-            <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-nascimento input-nascimento" maxlength="10" required>
-        </div>
-        <div class="campo aee">
-            <select class="aluno-publico-aee" required>
-                <option value="">Público AEE</option>
-                <option value="Sim">Sim</option>
-                <option value="Não">Não</option>
-            </select>
-        </div>
-        <button type="button" class="remover-aluno">✕</button>
+                <div class="campo nome">
+                    <input type="text" placeholder="Nome do aluno ${numero}" class="aluno-nome" required>
+                </div>
+                <div class="campo doc">
+                    <input type="text" placeholder="Documento com foto" class="aluno-documento" required>
+                </div>
+                <div class="campo data-matricula">
+                    <span class="label-data">Matrícula</span>
+                    <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-matricula input-matricula" maxlength="10" required>
+                </div>
+                <div class="campo id-aluno">
+                    <input type="text" placeholder="ID do aluno" class="aluno-identidade" required>
+                </div>
+                <div class="campo data-nascimento">
+                    <span class="label-data">Nascimento</span>
+                    <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-nascimento input-nascimento" maxlength="10" required>
+                </div>
+                <div class="campo aee">
+                    <label class="checkbox-aee">
+                        <input type="checkbox" class="aluno-publico-aee">
+                        <span>AEE</span>
+                    </label>
+                </div>
+                <button type="button" class="remover-aluno">✕</button>
     `;
 
     // Aplica máscara de data aos campos de data
@@ -239,23 +238,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Data de nascimento inválida: o aluno já possui mais de 18 anos.');
                 return;
             }
-            if (!selectPublico || selectPublico.value === '') {
-                alert('Selecione "Sim" ou "Não" no campo Público AEE de todos os alunos.');
-                return;
-            }
+
         }
         
             const alunos = []; 
             linhasAlunos.forEach(linha => {
             const inputs = linha.querySelectorAll('input');
             const selectPublico = linha.querySelector('.aluno-publico-aee');
+            const checkboxAEE = linha.querySelector('.aluno-publico-aee');
             alunos.push({
                 nome: capitalizarNome(inputs[0].value.trim()),
                 documento: inputs[1].value.trim(),
-                dataMatricula: inputs[2].value.trim(), // já no formato dd/mm/aaaa
+                dataMatricula: inputs[2].value.trim(),
                 identidade: inputs[3].value.trim(),
-                dataNascimento: inputs[4].value.trim(), // já no formato dd/mm/aaaa
-                publicoAEE: selectPublico ? selectPublico.value : ''
+                dataNascimento: inputs[4].value.trim(),
+                publicoAEE: checkboxAEE && checkboxAEE.checked ? 'Sim' : 'Não'
             });
         });
 
