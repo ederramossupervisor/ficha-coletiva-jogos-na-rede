@@ -127,28 +127,52 @@ h2 {
     cursor: pointer;
 }
 
-/* Linha de aluno */
+/* Linha de aluno – layout flexível */
 .aluno-linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
     background: var(--cor-branco);
     border: 1px solid var(--cor-borda);
     border-radius: var(--radius);
     padding: 16px;
     margin-bottom: 14px;
-    display: grid;
-    grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr 1.5fr 1.2fr auto;
-    gap: 12px;
-    align-items: end;
     position: relative;
     transition: var(--transition);
 }
-
 .aluno-linha:hover {
     box-shadow: var(--sombra-hover);
     border-color: var(--cor-azul);
 }
 
+/* Cada campo (wrapper) */
+.campo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* permite encolher */
+}
+/* Distribuição de larguras */
+.campo.nome { flex: 2 1 180px; }
+.campo.doc { flex: 1.5 1 140px; }
+.campo.data-matricula,
+.campo.data-nascimento { flex: 1.5 1 130px; }
+.campo.id-aluno { flex: 1.5 1 120px; }
+.campo.aee { flex: 1 1 110px; }
+
+/* Label das datas */
+.label-data {
+    font-size: 0.75em;
+    font-weight: 600;
+    color: var(--cor-texto);
+    margin-bottom: 2px;
+    padding-left: 2px;
+}
+
+/* Campos internos */
 .aluno-linha input,
 .aluno-linha select {
+    width: 100%;
     padding: 8px;
     border: 1px solid var(--cor-borda);
     border-radius: 6px;
@@ -156,14 +180,13 @@ h2 {
     background: #fafbfc;
     transition: var(--transition);
 }
-
 .aluno-linha input:focus,
 .aluno-linha select:focus {
     border-color: var(--cor-rosa);
     box-shadow: 0 0 0 2px rgba(240, 155, 190, 0.2);
 }
 
-/* Botão remover aluno */
+/* Botão remover (mesma posição absoluta) */
 .remover-aluno {
     position: absolute;
     top: 8px;
@@ -183,12 +206,41 @@ h2 {
     transition: var(--transition);
     z-index: 1;
 }
-
 .remover-aluno:hover {
     background: #e080a8;
     transform: scale(1.1);
 }
 
+/* Responsividade específica para as linhas */
+@media (max-width: 768px) {
+    .aluno-linha {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .campo.nome,
+    .campo.doc,
+    .campo.data-matricula,
+    .campo.id-aluno,
+    .campo.data-nascimento,
+    .campo.aee {
+        flex: auto;
+        width: 100%;
+    }
+    .label-data {
+        font-size: 0.8em;
+    }
+    .remover-aluno {
+        position: static;
+        margin-top: 8px;
+        width: auto;
+        border-radius: 6px;
+        height: auto;
+        padding: 6px 12px;
+        background: var(--cor-rosa);
+        font-size: 13px;
+        align-self: flex-end;
+    }
+}
 /* Botões gerais */
 .btn {
     padding: 10px 22px;
