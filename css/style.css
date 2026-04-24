@@ -1,10 +1,19 @@
+/* =============================================
+   Ficha Coletiva Escolar – Tema Vibrante
+   Cores: #0096E1 (azul), #FFFFFF (branco), #F09BBE (rosa)
+   ============================================= */
+
 :root {
-    --cor-primaria: #2c3e50;
-    --cor-secundaria: #3498db;
-    --cor-fundo: #ecf0f1;
+    --cor-azul: #0096E1;
+    --cor-branco: #FFFFFF;
+    --cor-rosa: #F09BBE;
     --cor-texto: #2c3e50;
-    --cor-borda: #bdc3c7;
-    --sombra: 0 2px 8px rgba(0,0,0,0.1);
+    --cor-fundo: #f0f4f8;
+    --cor-borda: #dde4ed;
+    --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --sombra-hover: 0 6px 20px rgba(0, 150, 225, 0.2);
+    --radius: 12px;
+    --transition: 0.25s ease;
 }
 
 * {
@@ -14,49 +23,63 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #fce4ec 0%, #e3f2fd 100%);
     display: flex;
     justify-content: center;
     padding: 20px;
+    min-height: 100vh;
 }
 
 .container {
     max-width: 1000px;
     width: 100%;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: var(--cor-branco);
+    border-radius: var(--radius);
+    box-shadow: var(--sombra-suave);
     padding: 30px;
+    transition: var(--transition);
 }
 
 h1 {
-    color: var(--cor-primaria);
+    color: var(--cor-azul);
     text-align: center;
     margin-bottom: 25px;
-    font-size: 1.8em;
+    font-size: 2em;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
+/* Seções do formulário */
 .form-section {
     margin-bottom: 25px;
     padding: 20px;
-    background: var(--cor-fundo);
-    border-radius: 8px;
+    background: #f8fafd;
+    border-radius: var(--radius);
     border: 1px solid var(--cor-borda);
+    transition: var(--transition);
+}
+
+.form-section:hover {
+    border-color: var(--cor-azul);
+    box-shadow: var(--sombra-hover);
 }
 
 h2 {
-    color: var(--cor-secundaria);
+    color: var(--cor-azul);
     margin-bottom: 15px;
     font-size: 1.3em;
-    border-bottom: 1px solid var(--cor-borda);
-    padding-bottom: 5px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--cor-rosa);
+    padding-bottom: 6px;
+    display: inline-block;
 }
 
+/* Grid para campos gerais */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
 }
 
 .form-group {
@@ -65,166 +88,246 @@ h2 {
 }
 
 .form-group label {
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     font-weight: 600;
     color: var(--cor-texto);
+    font-size: 0.9em;
 }
 
 .form-group input,
 .form-group select {
-    padding: 8px 10px;
+    padding: 10px 12px;
     border: 1px solid var(--cor-borda);
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 14px;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: var(--transition);
+    background: var(--cor-branco);
+    outline: none;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    outline: none;
-    border-color: var(--cor-secundaria);
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    border-color: var(--cor-azul);
+    box-shadow: 0 0 0 3px rgba(0, 150, 225, 0.15);
 }
 
+/* Gênero (checkboxes) */
 .check-group .checkbox-group {
     display: flex;
     gap: 20px;
-    padding: 8px 0;
+    padding: 10px 0;
+    align-items: center;
 }
 
-/* Linha de aluno – agora com 3 colunas fixas (2 linhas) */
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Linha de aluno */
 .aluno-linha {
-    background: #fff;
+    background: var(--cor-branco);
     border: 1px solid var(--cor-borda);
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 12px;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
     display: grid;
-    grid-template-columns: 2fr 1.5fr 1.5fr;   /* 3 colunas por linha */
-    gap: 10px;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr 1.5fr 1.2fr auto;
+    gap: 12px;
     align-items: end;
     position: relative;
-    transition: box-shadow 0.2s;
+    transition: var(--transition);
 }
 
 .aluno-linha:hover {
-    box-shadow: var(--sombra);
+    box-shadow: var(--sombra-hover);
+    border-color: var(--cor-azul);
 }
 
-.aluno-linha input {
-    padding: 6px 8px;
+.aluno-linha input,
+.aluno-linha select {
+    padding: 8px;
     border: 1px solid var(--cor-borda);
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 13px;
-    width: 100%;
+    background: #fafbfc;
+    transition: var(--transition);
 }
 
-.aluno-linha input:focus {
-    border-color: var(--cor-secundaria);
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+.aluno-linha input:focus,
+.aluno-linha select:focus {
+    border-color: var(--cor-rosa);
+    box-shadow: 0 0 0 2px rgba(240, 155, 190, 0.2);
 }
 
-/* Botão remover posicionado no canto superior direito */
+/* Botão remover aluno */
 .remover-aluno {
     position: absolute;
     top: 8px;
     right: 10px;
-    background: #e74c3c;
-    color: #fff;
+    background: var(--cor-rosa);
+    color: white;
     border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
-    cursor: pointer;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
     font-weight: bold;
-    transition: background 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
     z-index: 1;
 }
 
 .remover-aluno:hover {
-    background: #c0392b;
+    background: #e080a8;
+    transform: scale(1.1);
 }
 
-/* Ajuste para telas muito pequenas (empilhar tudo) */
-@media (max-width: 600px) {
-    .aluno-linha {
-        grid-template-columns: 1fr;
-    }
-    .remover-aluno {
-        position: static;
-        margin-top: 5px;
-    }
-}
-
-/* Botões */
+/* Botões gerais */
 .btn {
-    padding: 10px 18px;
+    padding: 10px 22px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.3s, transform 0.1s;
-    margin-top: 10px;
+    font-size: 14px;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    letter-spacing: 0.3px;
 }
 
 .btn:active {
-    transform: scale(0.97);
+    transform: scale(0.96);
 }
 
 .btn-primary {
-    background: var(--cor-secundaria);
-    color: #fff;
+    background: var(--cor-azul);
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 150, 225, 0.3);
 }
 
 .btn-primary:hover {
-    background: #2980b9;
+    background: #0085cc;
+    box-shadow: 0 6px 16px rgba(0, 150, 225, 0.4);
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
-    background: #7f8c8d;
-    color: #fff;
+    background: var(--cor-rosa);
+    color: white;
+    box-shadow: 0 4px 10px rgba(240, 155, 190, 0.35);
 }
 
 .btn-secondary:hover {
-    background: #6c7a7b;
+    background: #e384aa;
+    box-shadow: 0 6px 16px rgba(240, 155, 190, 0.45);
+    transform: translateY(-1px);
 }
 
+/* Ações finais */
 .acoes-finais {
     text-align: center;
     margin-top: 25px;
 }
 
 .status {
-    margin-top: 10px;
+    margin-top: 15px;
+    font-weight: 600;
+    font-size: 0.95em;
+    color: var(--cor-texto);
+    padding: 8px;
+    border-radius: 6px;
+    background: #f0f4f8;
+}
+
+.status a {
+    color: var(--cor-azul);
+    text-decoration: underline;
     font-weight: 600;
 }
 
-/* Responsivo: empilhar colunas da linha de aluno em telas menores */
-@media (max-width: 900px) {
+/* ---------- RESPONSIVIDADE ---------- */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    h1 {
+        font-size: 1.6em;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* Aluno: empilha campos */
     .aluno-linha {
         grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 12px;
     }
+
+    .aluno-linha input,
+    .aluno-linha select {
+        grid-column: span 2;
+    }
+
+    /* Nome ocupa linha inteira */
+    .aluno-linha .aluno-nome {
+        grid-column: span 2;
+    }
+
+    /* Ajusta botão remover */
     .remover-aluno {
-        justify-self: end;
+        top: 6px;
+        right: 8px;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .acoes-finais .btn {
+        width: auto;
     }
 }
 
-html {
-  background-color: #2c3e50;
-}
+/* Extra small (celulares menores) */
+@media (max-width: 480px) {
+    .aluno-linha {
+        grid-template-columns: 1fr;
+    }
 
-/* Rótulos para os campos de data */
-.input-matricula::before {
-    content: "Matrícula: ";
-    font-weight: 600;
-    font-size: 12px;
-    color: var(--cor-texto);
-    white-space: nowrap;
-}
+    .aluno-linha .aluno-nome,
+    .aluno-linha input,
+    .aluno-linha select {
+        grid-column: span 1;
+    }
 
-.input-nascimento::before {
-    content: "Nasc.: ";
-    font-weight: 600;
-    font-size: 12px;
-    color: var(--cor-texto);
-    white-space: nowrap;
+    .remover-aluno {
+        position: static;
+        margin-top: 8px;
+        width: auto;
+        border-radius: 6px;
+        height: auto;
+        padding: 6px 12px;
+        background: var(--cor-rosa);
+        font-size: 13px;
+    }
 }
