@@ -211,3 +211,20 @@ h2 {
 html {
   background-color: #2c3e50;
 }
+
+/* Rótulos para os campos de data */
+.input-matricula::before {
+    content: "Matrícula: ";
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--cor-texto);
+    white-space: nowrap;
+}
+
+.input-nascimento::before {
+    content: "Nasc.: ";
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--cor-texto);
+    white-space: nowrap;
+}
