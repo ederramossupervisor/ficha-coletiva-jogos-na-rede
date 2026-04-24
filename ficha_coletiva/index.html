@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha Coletiva - Jogos na Rede</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+</head>
+<body>
+    <div class="container">
+        <h1>Ficha Coletiva - Jogos na Rede</h1>
+
+        <form id="form-ficha">
+            <!-- Dados Gerais -->
+            <section class="form-section">
+                <h2>Informações Gerais</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="modalidade">Modalidade:</label>
+                        <select id="modalidade" required></select>
+                    </div>
+                    <div class="form-group" id="grupo-submodalidade" style="display: none;">
+                        <label for="submodalidade">Submodalidade (Atletismo):</label>
+                        <select id="submodalidade"></select>
+                    </div>
+                    <div class="form-group check-group">
+                        <label>Gênero:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" id="genF"> Feminino</label>
+                            <label><input type="checkbox" id="genM"> Masculino</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="escola">Escola:</label>
+                        <select id="escola" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data (dd/mm/aaaa):</label>
+                        <input type="text" id="data" readonly>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Responsáveis -->
+            <section class="form-section">
+                <h2>Responsáveis</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="diretor">Diretor(a):</label>
+                        <input type="text" id="diretor" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="professor">Professor(a):</label>
+                        <input type="text" id="professor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="auxiliar">Auxiliar Técnico(a):</label>
+                        <input type="text" id="auxiliar">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lista de Alunos -->
+            <section class="form-section">
+                <h2>Alunos (até 15)</h2>
+                <div id="lista-alunos">
+                    <!-- As linhas dos alunos serão geradas aqui -->
+                </div>
+                <button type="button" id="btn-adicionar-aluno" class="btn btn-secondary">+ Adicionar Aluno</button>
+            </section>
+
+            <!-- Ações -->
+            <div class="acoes-finais">
+                <button type="submit" id="btn-gerar" class="btn btn-primary">Gerar Ficha</button>
+                <div id="status-mensagem" class="status"></div>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Registro do Service Worker (para PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registrado'))
+                    .catch(err => console.error('Falha no Service Worker', err));
+            });
+        }
+    </script>
+</body>
+</html>

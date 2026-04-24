@@ -1,0 +1,213 @@
+:root {
+    --cor-primaria: #2c3e50;
+    --cor-secundaria: #3498db;
+    --cor-fundo: #ecf0f1;
+    --cor-texto: #2c3e50;
+    --cor-borda: #bdc3c7;
+    --sombra: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+}
+
+h1 {
+    color: var(--cor-primaria);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.form-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: var(--cor-fundo);
+    border-radius: 8px;
+    border: 1px solid var(--cor-borda);
+}
+
+h2 {
+    color: var(--cor-secundaria);
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    border-bottom: 1px solid var(--cor-borda);
+    padding-bottom: 5px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: var(--cor-texto);
+}
+
+.form-group input,
+.form-group select {
+    padding: 8px 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--cor-secundaria);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.check-group .checkbox-group {
+    display: flex;
+    gap: 20px;
+    padding: 8px 0;
+}
+
+/* Linha de aluno – agora com 3 colunas fixas (2 linhas) */
+.aluno-linha {
+    background: #fff;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr;   /* 3 colunas por linha */
+    gap: 10px;
+    align-items: end;
+    position: relative;
+    transition: box-shadow 0.2s;
+}
+
+.aluno-linha:hover {
+    box-shadow: var(--sombra);
+}
+
+.aluno-linha input {
+    padding: 6px 8px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    font-size: 13px;
+    width: 100%;
+}
+
+.aluno-linha input:focus {
+    border-color: var(--cor-secundaria);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+}
+
+/* Botão remover posicionado no canto superior direito */
+.remover-aluno {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+    z-index: 1;
+}
+
+.remover-aluno:hover {
+    background: #c0392b;
+}
+
+/* Ajuste para telas muito pequenas (empilhar tudo) */
+@media (max-width: 600px) {
+    .aluno-linha {
+        grid-template-columns: 1fr;
+    }
+    .remover-aluno {
+        position: static;
+        margin-top: 5px;
+    }
+}
+
+/* Botões */
+.btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.1s;
+    margin-top: 10px;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn-primary {
+    background: var(--cor-secundaria);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-secondary {
+    background: #7f8c8d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: #6c7a7b;
+}
+
+.acoes-finais {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.status {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* Responsivo: empilhar colunas da linha de aluno em telas menores */
+@media (max-width: 900px) {
+    .aluno-linha {
+        grid-template-columns: 1fr 1fr;
+    }
+    .remover-aluno {
+        justify-self: end;
+    }
+}
+
+html {
+  background-color: #2c3e50;
+}
