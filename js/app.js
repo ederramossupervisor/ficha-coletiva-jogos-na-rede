@@ -125,9 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
         div.innerHTML = `
             <input type="text" placeholder="Nome ${numero}" class="aluno-nome" required>
             <input type="text" placeholder="Nº Documento" class="aluno-documento">
-            <input type="date" class="aluno-data-matricula">
+            <input type="date" class="aluno-data-matricula input-matricula">
             <input type="text" placeholder="Identidade" class="aluno-identidade">
-            <input type="date" class="aluno-data-nascimento">
+            <input type="date" class="aluno-data-nascimento input-nascimento">
             <select class="aluno-publico-aee">
                 <option value="">Público AEE</option>
                 <option value="Sim">Sim</option>
