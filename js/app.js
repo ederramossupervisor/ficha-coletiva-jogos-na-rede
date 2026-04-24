@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dataMatricula: inputs[2].value.trim(),
                 identidade: inputs[3].value.trim(),
                 dataNascimento: inputs[4].value.trim(),
-                publicoAEE: checkboxAEE && checkboxAEE.checked ? 'Sim' : 'Não'
+                publicoAEE: checkboxAEE && checkboxAEE.checked ? 'X' : ''
             });
         });
 
