@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         listaAlunos.appendChild(criarLinhaAluno(i + 1));
     }
 
-    // ---- Envio do formulário ----
+        // ---- Envio do formulário ----
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -166,17 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Preencha o nome do professor(a).');
             return;
         }
-
-                // Validações básicas
-        if (!selectEscola.value) {
-            alert('Selecione a escola.');
-            return;
-        }
-        if (!document.getElementById('professor').value.trim()) {
-            alert('Preencha o nome do professor(a).');
-            return;
-        }
-        // 👇 INSIRA AQUI AS VALIDAÇÕES DA MODALIDADE
         if (!selectModalidade.value) {
             alert('Selecione a modalidade.');
             return;
@@ -192,13 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
             modalidade = `Atletismo - ${selectSubmodalidade.value}`;
         }
 
-        // Validação de obrigatoriedade dos alunos
+        // Obtém a lista de alunos UMA ÚNICA VEZ
         const linhasAlunos = listaAlunos.querySelectorAll('.aluno-linha');
+
+        // Validação de obrigatoriedade dos alunos
         for (const linha of linhasAlunos) {
             const inputs = linha.querySelectorAll('input');
             const selectPublico = linha.querySelector('.aluno-publico-aee');
 
-            // Verifica cada campo
             if (!inputs[0].value.trim()) {
                 alert('Preencha o nome de todos os alunos.');
                 return;
@@ -225,30 +215,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-                // Coleta os alunos
-                const alunos = [];
-                const linhasAlunos = listaAlunos.querySelectorAll('.aluno-linha');
-                // Função auxiliar para converter data ISO (yyyy-mm-dd) para dd/mm/aaaa
-                const formatarData = (dataISO) => {
-                    if (!dataISO) return '';
-                    const partes = dataISO.split('-');
-                    if (partes.length !== 3) return dataISO;
-                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
-                };
+        // Coleta os dados dos alunos (usando a mesma variável 'linhasAlunos')
+        const alunos = [];
+        const formatarData = (dataISO) => {
+            if (!dataISO) return '';
+            const partes = dataISO.split('-');
+            if (partes.length !== 3) return dataISO;
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        };
 
-                linhasAlunos.forEach(linha => {
-                    const inputs = linha.querySelectorAll('input');
-                    const selectPublico = linha.querySelector('.aluno-publico-aee');
-                    alunos.push({
-                        nome: capitalizarNome(inputs[0].value.trim()),
-                        documento: inputs[1].value.trim(),
-                        dataMatricula: formatarData(inputs[2].value),
-                        identidade: inputs[3].value.trim(),
-                        dataNascimento: formatarData(inputs[4].value),
-                        publicoAEE: selectPublico ? selectPublico.value : ''
-                    });
-                });
-                
+        linhasAlunos.forEach(linha => {
+            const inputs = linha.querySelectorAll('input');
+            const selectPublico = linha.querySelector('.aluno-publico-aee');
+            alunos.push({
+                nome: capitalizarNome(inputs[0].value.trim()),
+                documento: inputs[1].value.trim(),
+                dataMatricula: formatarData(inputs[2].value),
+                identidade: inputs[3].value.trim(),
+                dataNascimento: formatarData(inputs[4].value),
+                publicoAEE: selectPublico ? selectPublico.value : ''
+            });
+        });
+
         const payload = {
             modalidade: modalidade,
             generoFeminino: document.getElementById('genF').checked,
@@ -263,36 +251,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         statusDiv.textContent = 'Gerando documento...';
 
-                try {
-                    const response = await fetch(CLOUD_FUNCTION_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+        try {
+            const response = await fetch(CLOUD_FUNCTION_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-                    if (!response.ok) {
-                        throw new Error('Erro na geração do PDF');
-                    }
+            if (!response.ok) {
+                throw new Error('Erro na geração do PDF');
+            }
 
-                    // Recebe o blob PDF
-                    const blob = await response.blob();
-                    // Cria um link temporário e dispara o download
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    // Nome do arquivo: Escola_Prof_Ficha_Coletiva.pdf, com underscores
-                    let nomeArquivo = `${payload.escola}_${payload.professor}_Ficha_Coletiva`;
-                    nomeArquivo = nomeArquivo.replace(/\s+/g, '_') + '.pdf';
-                    a.download = nomeArquivo;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    window.URL.revokeObjectURL(url);
-                    statusDiv.textContent = '✅ PDF gerado com sucesso! O download foi iniciado.';
-                } catch (error) {
-                    statusDiv.textContent = '❌ Erro de conexão com o servidor. Verifique se a Cloud Function está ativa.';
-                    console.error(error);
-                }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            let nomeArquivo = `${payload.escola}_${payload.professor}_Ficha_Coletiva`;
+            nomeArquivo = nomeArquivo.replace(/\s+/g, '_') + '.pdf';
+            a.download = nomeArquivo;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            statusDiv.textContent = '✅ PDF gerado com sucesso! O download foi iniciado.';
+        } catch (error) {
+            statusDiv.textContent = '❌ Erro de conexão com o servidor. Verifique se a Cloud Function está ativa.';
+            console.error(error);
+        }
     });
-
-});
