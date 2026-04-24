@@ -176,6 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Preencha a data de matrícula de todos os alunos.');
                 return;
             }
+            // Valida: data de matrícula não pode ser anterior a 04/11/2025
+            const dataMatStr = inputs[2].value; // formato yyyy-mm-dd
+            const dataLimite = new Date('2025-11-04T00:00:00');
+            const dataMatricula = new Date(dataMatStr + 'T00:00:00');
+            if (dataMatricula < dataLimite) {
+                alert('Insira a data de matrícula atual.');
+                return;
+            }
             if (!inputs[3].value.trim()) {
                 alert('Preencha o ID do aluno para todos os alunos.');
                 return;
