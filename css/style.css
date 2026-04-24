@@ -383,3 +383,25 @@ h2 {
         font-size: 13px;
     }
 }
+/* Checkbox AEE */
+.campo.aee {
+    justify-content: flex-end; /* alinha ao fundo da linha */
+}
+
+.checkbox-aee {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--cor-texto);
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-aee input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--cor-azul);
+    cursor: pointer;
+}
