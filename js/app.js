@@ -180,8 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Preencha o ID do aluno para todos os alunos.');
                 return;
             }
-            if (!inputs[4].value) {
+                        if (!inputs[4].value) {
                 alert('Preencha a data de nascimento de todos os alunos.');
+                return;
+            }
+            // Valida ano de nascimento: não pode ser ≤ 2007 (mais de 18 anos)
+            const dataNasc = new Date(inputs[4].value + 'T00:00:00'); // evita fuso
+            const anoNasc = dataNasc.getFullYear();
+            if (anoNasc <= 2007) {
+                alert('Data de nascimento inválida: o aluno já possui mais de 18 anos.');
                 return;
             }
             if (!selectPublico || selectPublico.value === '') {
