@@ -120,24 +120,24 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ---- Gerenciar lista de alunos ----
     function criarLinhaAluno(numero) {
-        const div = document.createElement('div');
-        div.className = 'aluno-linha';
-        div.innerHTML = `
-            <input type="text" placeholder="Nome ${numero}" class="aluno-nome" required>
-            <input type="text" placeholder="Nº Documento" class="aluno-documento">
-            <input type="date" class="aluno-data-matricula input-matricula">
-            <input type="text" placeholder="Identidade" class="aluno-identidade">
-            <input type="date" class="aluno-data-nascimento input-nascimento">
-            <select class="aluno-publico-aee">
-                <option value="">Público AEE</option>
-                <option value="Sim">Sim</option>
-                <option value="Não">Não</option>
-            </select>
-            <button type="button" class="remover-aluno">✕</button>
-        `;
-        div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
-        return div;
-    }
+    const div = document.createElement('div');
+    div.className = 'aluno-linha';
+    div.innerHTML = `
+        <input type="text" placeholder="Nome do aluno ${numero}" class="aluno-nome" required>
+        <input type="text" placeholder="Documento com foto" class="aluno-documento" required>
+        <input type="date" class="aluno-data-matricula input-matricula" required>
+        <input type="text" placeholder="ID do aluno" class="aluno-identidade" required>
+        <input type="date" class="aluno-data-nascimento input-nascimento" required>
+        <select class="aluno-publico-aee" required>
+            <option value="">Público AEE</option>
+            <option value="Sim">Sim</option>
+            <option value="Não">Não</option>
+        </select>
+        <button type="button" class="remover-aluno">✕</button>
+    `;
+    div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
+    return div;
+}
 
     btnAdicionar.addEventListener('click', () => {
         const total = listaAlunos.querySelectorAll('.aluno-linha').length;
@@ -190,6 +190,39 @@ document.addEventListener('DOMContentLoaded', () => {
         let modalidade = selectModalidade.value;
         if (modalidade === 'Atletismo') {
             modalidade = `Atletismo - ${selectSubmodalidade.value}`;
+        }
+
+        // Validação de obrigatoriedade dos alunos
+        const linhasAlunos = listaAlunos.querySelectorAll('.aluno-linha');
+        for (const linha of linhasAlunos) {
+            const inputs = linha.querySelectorAll('input');
+            const selectPublico = linha.querySelector('.aluno-publico-aee');
+
+            // Verifica cada campo
+            if (!inputs[0].value.trim()) {
+                alert('Preencha o nome de todos os alunos.');
+                return;
+            }
+            if (!inputs[1].value.trim()) {
+                alert('O campo "Documento com foto" é obrigatório.\n\nCaso o aluno não possua documento com foto, preencha com o ID do aluno.');
+                return;
+            }
+            if (!inputs[2].value) {
+                alert('Preencha a data de matrícula de todos os alunos.');
+                return;
+            }
+            if (!inputs[3].value.trim()) {
+                alert('Preencha o ID do aluno para todos os alunos.');
+                return;
+            }
+            if (!inputs[4].value) {
+                alert('Preencha a data de nascimento de todos os alunos.');
+                return;
+            }
+            if (!selectPublico || selectPublico.value === '') {
+                alert('Selecione "Sim" ou "Não" no campo Público AEE de todos os alunos.');
+                return;
+            }
         }
 
                 // Coleta os alunos
