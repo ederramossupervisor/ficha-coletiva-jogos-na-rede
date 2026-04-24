@@ -100,25 +100,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function mascaraData(input) {
+        let valor = input.value.replace(/\D/g, ''); // remove tudo que não é dígito
+        if (valor.length > 8) valor = valor.slice(0, 8);
+        let formatado = '';
+        if (valor.length > 0) {
+            formatado = valor.substring(0, 2);
+            if (valor.length >= 3) {
+                formatado += '/' + valor.substring(2, 4);
+            }
+            if (valor.length >= 5) {
+                formatado += '/' + valor.substring(4, 8);
+            }
+        }
+        input.value = formatado;
+    }
+
     function criarLinhaAluno(numero) {
-        const div = document.createElement('div');
-        div.className = 'aluno-linha';
-        div.innerHTML = `
+    const div = document.createElement('div');
+    div.className = 'aluno-linha';
+    div.innerHTML = `
+        <div class="campo nome">
             <input type="text" placeholder="Nome do aluno ${numero}" class="aluno-nome" required>
+        </div>
+        <div class="campo doc">
             <input type="text" placeholder="Documento com foto" class="aluno-documento" required>
-            <input type="date" class="aluno-data-matricula input-matricula" required>
+        </div>
+        <div class="campo data-matricula">
+            <span class="label-data">Matrícula</span>
+            <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-matricula input-matricula" maxlength="10" required>
+        </div>
+        <div class="campo id-aluno">
             <input type="text" placeholder="ID do aluno" class="aluno-identidade" required>
-            <input type="date" class="aluno-data-nascimento input-nascimento" required>
+        </div>
+        <div class="campo data-nascimento">
+            <span class="label-data">Nascimento</span>
+            <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-nascimento input-nascimento" maxlength="10" required>
+        </div>
+        <div class="campo aee">
             <select class="aluno-publico-aee" required>
                 <option value="">Público AEE</option>
                 <option value="Sim">Sim</option>
                 <option value="Não">Não</option>
             </select>
-            <button type="button" class="remover-aluno">✕</button>
-        `;
-        div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
-        return div;
-    }
+        </div>
+        <button type="button" class="remover-aluno">✕</button>
+    `;
+
+    // Aplica máscara de data aos campos de data
+    const inputMat = div.querySelector('.aluno-data-matricula');
+    const inputNasc = div.querySelector('.aluno-data-nascimento');
+    inputMat.addEventListener('input', () => mascaraData(inputMat));
+    inputNasc.addEventListener('input', () => mascaraData(inputNasc));
+
+    // Botão remover
+    div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
+    return div;
+}
 
     btnAdicionar.addEventListener('click', () => {
         const total = listaAlunos.querySelectorAll('.aluno-linha').length;
@@ -172,8 +210,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('O campo "Documento com foto" é obrigatório.\n\nCaso o aluno não possua documento com foto, preencha com o ID do aluno.');
                 return;
             }
-            if (!inputs[2].value) {
-                alert('Preencha a data de matrícula de todos os alunos.');
+                        if (inputs[2].value.trim().length < 10) {
+                alert('Preencha a data de matrícula de todos os alunos (dd/mm/aaaa).');
+                return;
+            }
+            const dataMatStr = inputs[2].value.trim(); // formato dd/mm/aaaa
+            // Converter para Date para comparar
+            const [diaMat, mesMat, anoMat] = dataMatStr.split('/');
+            const dataMatricula = new Date(`${anoMat}-${mesMat}-${diaMat}T00:00:00`);
+            const dataLimiteMat = new Date('2025-11-04T00:00:00');
+            if (dataMatricula < dataLimiteMat) {
+                alert('Insira a data de matrícula atual.');
                 return;
             }
             // Valida: data de matrícula não pode ser anterior a 04/11/2025
@@ -188,8 +235,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Preencha o ID do aluno para todos os alunos.');
                 return;
             }
-                        if (!inputs[4].value) {
-                alert('Preencha a data de nascimento de todos os alunos.');
+                        if (inputs[4].value.trim().length < 10) {
+                alert('Preencha a data de nascimento de todos os alunos (dd/mm/aaaa).');
+                return;
+            }
+            const dataNascStr = inputs[4].value.trim();
+            const [diaNasc, mesNasc, anoNasc] = dataNascStr.split('/');
+            const ano = parseInt(anoNasc, 10);
+            if (ano <= 2007) {
+                alert('Data de nascimento inválida: o aluno já possui mais de 18 anos.');
                 return;
             }
             // Valida ano de nascimento: não pode ser ≤ 2007 (mais de 18 anos)
@@ -219,9 +273,9 @@ document.addEventListener('DOMContentLoaded', () => {
             alunos.push({
                 nome: capitalizarNome(inputs[0].value.trim()),
                 documento: inputs[1].value.trim(),
-                dataMatricula: formatarData(inputs[2].value),
+                dataMatricula: inputs[2].value.trim(), // já no formato dd/mm/aaaa
                 identidade: inputs[3].value.trim(),
-                dataNascimento: formatarData(inputs[4].value),
+                dataNascimento: inputs[4].value.trim(), // já no formato dd/mm/aaaa
                 publicoAEE: selectPublico ? selectPublico.value : ''
             });
         });
