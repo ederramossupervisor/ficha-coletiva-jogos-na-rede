@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modalidade = `Atletismo - ${selectSubmodalidade.value}`;
         }
 
-        const linhasAlunos = listaAlunos.querySelectorAll('.aluno-linha');
+                const linhasAlunos = listaAlunos.querySelectorAll('.aluno-linha');
 
         for (const linha of linhasAlunos) {
             const inputs = linha.querySelectorAll('input');
@@ -210,12 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('O campo "Documento com foto" é obrigatório.\n\nCaso o aluno não possua documento com foto, preencha com o ID do aluno.');
                 return;
             }
-                        if (inputs[2].value.trim().length < 10) {
+            if (inputs[2].value.trim().length < 10) {
                 alert('Preencha a data de matrícula de todos os alunos (dd/mm/aaaa).');
                 return;
             }
-            const dataMatStr = inputs[2].value.trim(); // formato dd/mm/aaaa
-            // Converter para Date para comparar
+            // Valida data de matrícula (formato dd/mm/aaaa)
+            const dataMatStr = inputs[2].value.trim();
             const [diaMat, mesMat, anoMat] = dataMatStr.split('/');
             const dataMatricula = new Date(`${anoMat}-${mesMat}-${diaMat}T00:00:00`);
             const dataLimiteMat = new Date('2025-11-04T00:00:00');
@@ -223,33 +223,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Insira a data de matrícula atual.');
                 return;
             }
-            // Valida: data de matrícula não pode ser anterior a 04/11/2025
-            const dataMatStr = inputs[2].value; // formato yyyy-mm-dd
-            const dataLimite = new Date('2025-11-04T00:00:00');
-            const dataMatricula = new Date(dataMatStr + 'T00:00:00');
-            if (dataMatricula < dataLimite) {
-                alert('Insira a data de matrícula atual.');
-                return;
-            }
             if (!inputs[3].value.trim()) {
                 alert('Preencha o ID do aluno para todos os alunos.');
                 return;
             }
-                        if (inputs[4].value.trim().length < 10) {
+            if (inputs[4].value.trim().length < 10) {
                 alert('Preencha a data de nascimento de todos os alunos (dd/mm/aaaa).');
                 return;
             }
+            // Valida ano de nascimento (não pode ser ≤ 2007)
             const dataNascStr = inputs[4].value.trim();
             const [diaNasc, mesNasc, anoNasc] = dataNascStr.split('/');
-            const ano = parseInt(anoNasc, 10);
-            if (ano <= 2007) {
-                alert('Data de nascimento inválida: o aluno já possui mais de 18 anos.');
-                return;
-            }
-            // Valida ano de nascimento: não pode ser ≤ 2007 (mais de 18 anos)
-            const dataNasc = new Date(inputs[4].value + 'T00:00:00'); // evita fuso
-            const anoNasc = dataNasc.getFullYear();
-            if (anoNasc <= 2007) {
+            const anoNascInt = parseInt(anoNasc, 10);
+            if (anoNascInt <= 2007) {
                 alert('Data de nascimento inválida: o aluno já possui mais de 18 anos.');
                 return;
             }
@@ -258,16 +244,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         }
-
-        const alunos = [];
-        const formatarData = (dataISO) => {
-            if (!dataISO) return '';
-            const partes = dataISO.split('-');
-            if (partes.length !== 3) return dataISO;
-            return `${partes[2]}/${partes[1]}/${partes[0]}`;
-        };
-
-        linhasAlunos.forEach(linha => {
+        
+            const alunos = []; 
+            linhasAlunos.forEach(linha => {
             const inputs = linha.querySelectorAll('input');
             const selectPublico = linha.querySelector('.aluno-publico-aee');
             alunos.push({
