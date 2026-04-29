@@ -79,8 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    popularSelect(selectModalidade, ["Basquete", "Futsal", "Handebol", "Voleibol", "Tênis de Mesa", "Atletismo"], 'Selecione a modalidade');
-    popularSelect(selectEscola, escolas, 'Selecione a escola...');
+    popularSelect(selectModalidade, ["Basquete", "Futsal", "Handebol", "Voleibol", "Tênis de Mesa", "Atletismo", "Xadrez"], 'Selecione a modalidade');    popularSelect(selectEscola, escolas, 'Selecione a escola...');
     popularSelect(selectSubmodalidade, submodalidades, 'Selecione a submodalidade');
 
     const hoje = new Date();
@@ -148,7 +147,7 @@ async function buscarDadosAluno(nome, escola, linhaDiv) {
     } else {
       idInput.value = '';
       idInput.style.color = 'var(--cor-texto)';
-      alert('Aluno não encontrado na base de dados.\n\nEntre em contato com:\nabarone@sedu.es.gov.br ou fdssilva@sedu.es.gov.br');
+      alert('Aluno não encontrado na base de dados.\n\nEnvie o nome completo do aluno e sua matrícula para:\nabarone@sedu.es.gov.br ou fdssilva@sedu.es.gov.br');
     }
   } catch (error) {
     idInput.value = '';
