@@ -506,7 +506,6 @@ document.addEventListener('DOMContentLoaded', () => {
             a.href = url;
             
             // Monta o nome do arquivo: Escola_Modalidade_Gênero.pdf
-            const categoria = getCategoria();
             let nomeModalidade = payload.modalidade; // já está correto (sem submodalidade)
             let nomeGenero = '';
             if (categoria === 'xadrez' || categoria === 'tenis_mesa') {
