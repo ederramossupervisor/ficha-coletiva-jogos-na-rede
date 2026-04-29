@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         statusDiv.textContent = 'Gerando documento...';
 
-        try {
+               try {
             const response = await fetch(CLOUD_FUNCTION_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -504,9 +504,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            let nomeArquivo = `${payload.escola}_${payload.professor}_Ficha_Coletiva`;
+            
+            // Monta o nome do arquivo: Escola_Modalidade_Gênero.pdf
+            const categoria = getCategoria();
+            let nomeModalidade = payload.modalidade; // já está correto (sem submodalidade)
+            let nomeGenero = '';
+            if (categoria === 'xadrez' || categoria === 'tenis_mesa') {
+                nomeGenero = 'Feminino e Masculino';
+            } else {
+                const generos = [];
+                if (checkFeminino.checked) generos.push('Feminino');
+                if (checkMasculino.checked) generos.push('Masculino');
+                nomeGenero = generos.join(' e ') || 'Sem Gênero';
+            }
+            let nomeArquivo = `${payload.escola}_${nomeModalidade}_${nomeGenero}`;
             nomeArquivo = nomeArquivo.replace(/\s+/g, '_') + '.pdf';
             a.download = nomeArquivo;
+
             document.body.appendChild(a);
             a.click();
             a.remove();
