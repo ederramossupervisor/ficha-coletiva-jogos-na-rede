@@ -425,3 +425,19 @@ h2 {
     accent-color: var(--cor-azul);
     cursor: pointer;
 }
+.blocos-genero {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.bloco-feminino, .bloco-masculino {
+  flex: 1;
+  min-width: 300px;
+  background: #f8fafd;
+  border-radius: var(--radius);
+  padding: 15px;
+}
+.bloco-feminino h3, .bloco-masculino h3 {
+  color: var(--cor-azul);
+  margin-bottom: 10px;
+}
