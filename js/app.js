@@ -412,11 +412,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // Validações específicas
-            if (fem.length === 0 || masc.length === 0) {
-                alert('É obrigatório inscrever ao menos uma aluna e um aluno.');
+            if (fem.length === 0 && masc.length === 0) {
+                alert('Insira ao menos um aluno (feminino ou masculino).');
                 return;
             }
+
             // Valida campos obrigatórios (implementação abreviada, mas você pode adaptar)
             const todosAlunos = [...fem, ...masc];
             for (const aluno of todosAlunos) {
