@@ -156,6 +156,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'coletiva';
     }
 
+        function normalizarNome(nome) {
+        return nome
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
     function mascaraData(input) {
         let valor = input.value.replace(/\D/g, '');
         if (valor.length > 8) valor = valor.slice(0, 8);
@@ -429,9 +438,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 // ... (omitido por brevidade, mas mantenha as validações que já existem)
             }
 
+                        // 🔍 Verifica nomes duplicados
+            const nomesNormalizados = todosAlunos.map(a => normalizarNome(a.nome));
+            const duplicados = nomesNormalizados.filter((nome, i, arr) => arr.indexOf(nome) !== i);
+            if (duplicados.length > 0) {
+                alert('Há nomes de alunos repetidos na ficha. Verifique e corrija.');
+                return;
+            }
+
             payload.alunosFeminino = fem;
             payload.alunosMasculino = masc;
-        } else {
+                } else {
             // Coletivas ou atletismo
             const linhas = listaAlunos.querySelectorAll('.aluno-linha');
             const alunos = [];
@@ -465,6 +482,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     publicoAEE: aeeCheck && aeeCheck.checked ? 'X' : ''
                 });
             }
+
+            // 🔍 Verifica nomes duplicados
+            const nomesNormalizados = alunos.map(a => normalizarNome(a.nome));
+            const duplicados = nomesNormalizados.filter((nome, i, arr) => arr.indexOf(nome) !== i);
+            if (duplicados.length > 0) {
+                alert('Há nomes de alunos repetidos na ficha. Verifique e corrija.');
+                return;
+            }
+
             // Validação de mínimo para coletivas
             if (categoria === 'coletiva') {
                 const mins = { 'Basquete': 8, 'Futsal': 10, 'Handebol': 10, 'Voleibol': 10 };
@@ -474,15 +500,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
             }
+
             payload.alunos = alunos;
             payload.generoFeminino = checkFeminino.checked;
             payload.generoMasculino = checkMasculino.checked;
         }
 
-        // Verifica gênero para modalidades que exigem
-        if (categoria === 'coletiva' || categoria === 'atletismo') {
+            if (categoria === 'coletiva' || categoria === 'atletismo') {
             if (!checkFeminino.checked && !checkMasculino.checked) {
                 alert('Selecione o gênero (Feminino e/ou Masculino).');
+                return;
+            }
+            // Modalidades coletivas exigem apenas um gênero
+            if (categoria === 'coletiva' && checkFeminino.checked && checkMasculino.checked) {
+                alert('Modalidades coletivas permitem apenas um gênero: escolha Feminino ou Masculino.');
                 return;
             }
         }
