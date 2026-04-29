@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     popularSelect(selectModalidade, ["Basquete", "Futsal", "Handebol", "Voleibol", "Tênis de Mesa", "Atletismo", "Xadrez"], 'Selecione a modalidade');
     popularSelect(selectEscola, escolas, 'Selecione a escola...');
-    popularSelect(selectSubmodalidade, submodalidades, 'Selecione a submodalidade');
 
     const hoje = new Date();
     const dia = String(hoje.getDate()).padStart(2, '0');
@@ -103,15 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
     selectEscola.addEventListener('change', () => {
         inputDiretor.value = diretores[selectEscola.value] || '';
     });
-
-    // Atualiza interface ao mudar modalidade
-    selectModalidade.addEventListener('change', () => {
-        // Submodalidade
-        if (selectModalidade.value === 'Atletismo') {
-            grupoSubmodalidade.style.display = 'flex';
-        } else {
-            grupoSubmodalidade.style.display = 'none';
-        }
+    
+ selectModalidade.addEventListener('change', () => {
+        // A submodalidade não é mais usada
+        grupoSubmodalidade.style.display = 'none';
 
         // Lógica de exibição dos blocos de alunos
         const categoria = getCategoria();
@@ -375,16 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Selecione a modalidade.');
             return;
         }
-        if (selectModalidade.value === 'Atletismo' && !selectSubmodalidade.value) {
-            alert('Selecione a submodalidade do Atletismo.');
-            return;
-        }
 
         const categoria = getCategoria();
-        let modalidade = selectModalidade.value;
-        if (modalidade === 'Atletismo') {
-            modalidade = `Atletismo - ${selectSubmodalidade.value}`;
-        }
+        const modalidade = selectModalidade.value;
 
         const payload = {
             modalidade: modalidade,
