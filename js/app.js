@@ -61,6 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Checkboxes de gênero
     const checkFeminino = document.getElementById('genF');
     const checkMasculino = document.getElementById('genM');
+    // Torna os checkboxes de gênero mutuamente exclusivos
+    checkFeminino.addEventListener('change', () => {
+        if (checkFeminino.checked) checkMasculino.checked = false;
+    });
+    checkMasculino.addEventListener('change', () => {
+        if (checkMasculino.checked) checkFeminino.checked = false;
+    });
 
     function capitalizarNome(nome) {
         const excecoes = ['da', 'de', 'do', 'das', 'dos', 'e'];
