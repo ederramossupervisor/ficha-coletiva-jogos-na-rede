@@ -117,11 +117,17 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = formatado;
     }
 
-    async function buscarIdAluno(nome, escola, inputId) {
+async function buscarDadosAluno(nome, escola, linhaDiv) {
   if (!nome.trim() || !escola) return;
-  // Mostra feedback no campo ID
-  inputId.value = 'Buscando...';
-  inputId.style.color = '#999';
+  const idInput = linhaDiv.querySelector('.aluno-identidade');
+  const matInput = linhaDiv.querySelector('.aluno-data-matricula');
+  const nascInput = linhaDiv.querySelector('.aluno-data-nascimento');
+
+  // Mostra feedback
+  idInput.value = 'Buscando...';
+  idInput.style.color = '#999';
+  matInput.value = '';
+  nascInput.value = '';
   try {
     const response = await fetch(LOOKUP_URL, {
       method: 'POST',
@@ -130,18 +136,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const result = await response.json();
     if (result.success) {
-      inputId.value = result.id;
-      inputId.style.color = 'var(--cor-texto)';
+      idInput.value = result.id;
+      idInput.style.color = 'var(--cor-texto)';
+      // Preenche datas, se existirem
+      if (result.dataNascimento) {
+        nascInput.value = result.dataNascimento;
+      }
+      if (result.dataMatricula) {
+        matInput.value = result.dataMatricula;
+      }
     } else {
-      inputId.value = '';
-      inputId.style.color = 'var(--cor-texto)';
+      idInput.value = '';
+      idInput.style.color = 'var(--cor-texto)';
       alert('Aluno não encontrado na base de dados.\n\nEntre em contato com:\nabarone@sedu.es.gov.br ou fdssilva@sedu.es.gov.br');
     }
   } catch (error) {
-    inputId.value = '';
-    inputId.style.color = 'var(--cor-texto)';
-    console.error('Erro na busca do ID:', error);
-    alert('Erro ao buscar ID. Tente novamente.');
+    idInput.value = '';
+    idInput.style.color = 'var(--cor-texto)';
+    console.error('Erro na busca:', error);
+    alert('Erro ao buscar dados. Tente novamente.');
   }
 }
 
@@ -187,14 +200,14 @@ function criarLinhaAluno(numero) {
     // *** NOVO: evento blur para buscar ID ***
     const inputNome = div.querySelector('.aluno-nome');
     const inputId = div.querySelector('.aluno-identidade');
-    inputNome.addEventListener('blur', () => {
-        const escola = selectEscola.value;
-        if (!escola) {
-            alert('Selecione a escola antes de preencher o nome do aluno.');
-            return;
-        }
-        buscarIdAluno(inputNome.value, escola, inputId);
-    });
+      inputNome.addEventListener('blur', () => {
+    const escola = selectEscola.value;
+    if (!escola) {
+      alert('Selecione a escola antes de preencher o nome do aluno.');
+      return;
+    }
+    buscarDadosAluno(inputNome.value, escola, div); // div é a linha inteira
+  });
 
     return div;
 }
