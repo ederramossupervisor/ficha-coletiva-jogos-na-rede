@@ -245,6 +245,11 @@ function criarLinhaAluno(numero) {
             return;
         }
 
+        if (!document.getElementById('genF').checked && !document.getElementById('genM').checked) {
+            alert('Selecione o gênero (Feminino e/ou Masculino).');
+            return;
+        }
+
         let modalidade = selectModalidade.value;
         if (modalidade === 'Atletismo') {
             modalidade = `Atletismo - ${selectSubmodalidade.value}`;
