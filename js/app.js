@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     const CLOUD_FUNCTION_URL = 'https://proxy-ficha-coletiva-327419300290.southamerica-east1.run.app/';
+    const LOOKUP_URL = CLOUD_FUNCTION_URL + 'lookup';
 
     const escolas = [
         "CEEFMTI Afonso Cláudio", "CEEFMTI Elisa Paiva", "EEEF Ivana Casagrande Scabelo", "EEEF Severino Paste",
@@ -116,37 +117,65 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = formatado;
     }
 
-    function criarLinhaAluno(numero) {
+    async function buscarIdAluno(nome, escola, inputId) {
+  if (!nome.trim() || !escola) return;
+  // Mostra feedback no campo ID
+  inputId.value = 'Buscando...';
+  inputId.style.color = '#999';
+  try {
+    const response = await fetch(LOOKUP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome: nome.trim(), escola: escola })
+    });
+    const result = await response.json();
+    if (result.success) {
+      inputId.value = result.id;
+      inputId.style.color = 'var(--cor-texto)';
+    } else {
+      inputId.value = '';
+      inputId.style.color = 'var(--cor-texto)';
+      alert('Aluno não encontrado na base de dados.\n\nEntre em contato com:\nabarone@sedu.es.gov.br ou fdssilva@sedu.es.gov.br');
+    }
+  } catch (error) {
+    inputId.value = '';
+    inputId.style.color = 'var(--cor-texto)';
+    console.error('Erro na busca do ID:', error);
+    alert('Erro ao buscar ID. Tente novamente.');
+  }
+}
+
+function criarLinhaAluno(numero) {
     const div = document.createElement('div');
     div.className = 'aluno-linha';
     div.innerHTML = `
-                <div class="campo nome">
-                    <input type="text" placeholder="Nome do aluno ${numero}" class="aluno-nome" required>
-                </div>
-                <div class="campo doc">
-                    <input type="text" placeholder="Documento com foto" class="aluno-documento" required>
-                </div>
-                <div class="campo data-matricula">
-                    <span class="label-data">Matrícula</span>
-                    <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-matricula input-matricula" maxlength="10" required>
-                </div>
-                <div class="campo id-aluno">
-                    <input type="text" placeholder="ID do aluno" class="aluno-identidade" required>
-                </div>
-                <div class="campo data-nascimento">
-                    <span class="label-data">Nascimento</span>
-                    <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-nascimento input-nascimento" maxlength="10" required>
-                </div>
-                <div class="campo aee">
-                    <label class="checkbox-aee">
-                        <input type="checkbox" class="aluno-publico-aee">
-                        <span>AEE</span>
-                    </label>
-                </div>
-                <button type="button" class="remover-aluno">✕</button>
+        <div class="campo nome">
+            <input type="text" placeholder="Nome do aluno ${numero}" class="aluno-nome" required>
+        </div>
+        <div class="campo doc">
+            <input type="text" placeholder="Documento com foto" class="aluno-documento" required>
+        </div>
+        <div class="campo data-matricula">
+            <span class="label-data">Matrícula</span>
+            <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-matricula input-matricula" maxlength="10" required>
+        </div>
+        <div class="campo id-aluno">
+            <input type="text" placeholder="ID do aluno" class="aluno-identidade" required>
+        </div>
+        <div class="campo data-nascimento">
+            <span class="label-data">Nascimento</span>
+            <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-nascimento input-nascimento" maxlength="10" required>
+        </div>
+        <div class="campo aee">
+            <label class="checkbox-aee">
+                <input type="checkbox" class="aluno-publico-aee">
+                <span>AEE</span>
+            </label>
+        </div>
+        <button type="button" class="remover-aluno">✕</button>
     `;
 
-    // Aplica máscara de data aos campos de data
+    // Máscara de data
     const inputMat = div.querySelector('.aluno-data-matricula');
     const inputNasc = div.querySelector('.aluno-data-nascimento');
     inputMat.addEventListener('input', () => mascaraData(inputMat));
@@ -154,9 +183,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Botão remover
     div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
+
+    // *** NOVO: evento blur para buscar ID ***
+    const inputNome = div.querySelector('.aluno-nome');
+    const inputId = div.querySelector('.aluno-identidade');
+    inputNome.addEventListener('blur', () => {
+        const escola = selectEscola.value;
+        if (!escola) {
+            alert('Selecione a escola antes de preencher o nome do aluno.');
+            return;
+        }
+        buscarIdAluno(inputNome.value, escola, inputId);
+    });
+
     return div;
 }
-
+    
     btnAdicionar.addEventListener('click', () => {
         const total = listaAlunos.querySelectorAll('.aluno-linha').length;
         if (total < 15) {
