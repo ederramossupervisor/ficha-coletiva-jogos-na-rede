@@ -250,9 +250,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-nascimento input-nascimento" maxlength="10" required>
             </div>
             <div class="campo aee">
+            <div class="checkbox-aee">
                 <input type="checkbox" class="aluno-publico-aee">
-                <span class="label-aee">AEE</span>
+                <span>AEE</span>
             </div>
+        </div>
             <button type="button" class="remover-aluno">✕</button>
         `;
 
@@ -329,9 +331,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="text" placeholder="dd/mm/aaaa" class="aluno-data-nascimento input-nascimento" maxlength="10" required>
             </div>
             <div class="campo aee">
+                <div class="checkbox-aee">
                     <input type="checkbox" class="aluno-publico-aee">
                     <span>AEE</span>
-                </label>
+                </div>
             </div>
             <button type="button" class="remover-aluno">✕</button>
         `;
