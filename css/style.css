@@ -405,19 +405,20 @@ h2 {
 }
 /* Checkbox AEE */
 .campo.aee {
-    justify-content: flex-end;
-    align-items: center;
-    gap: 6px;
+    justify-content: flex-end; /* alinha o wrapper na parte de baixo da célula */
 }
 
-.label-aee {
+.checkbox-aee {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 0.9em;
     font-weight: 500;
     color: var(--cor-texto);
     user-select: none;
 }
 
-.aluno-publico-aee {
+.checkbox-aee input[type="checkbox"] {
     width: 16px;
     height: 16px;
     accent-color: var(--cor-azul);
