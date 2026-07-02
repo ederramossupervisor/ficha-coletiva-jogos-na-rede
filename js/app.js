@@ -265,11 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         div.querySelector('.remover-aluno').addEventListener('click', () => {
             div.remove();
-            if (genero === 'FEMININO') {
-                renumerarListaGenero(listaFeminino, 'FEMININO');
-            } else {
-                renumerarListaGenero(listaMasculino, 'MASCULINO');
-            }
+            renumerarListaPadrao();  // ✅ chama a função correta para a lista padrão
         });
 
         const inputNome = div.querySelector('.aluno-nome');
@@ -348,10 +344,14 @@ document.addEventListener('DOMContentLoaded', () => {
         inputMat.addEventListener('input', () => mascaraData(inputMat));
         inputNasc.addEventListener('input', () => mascaraData(inputNasc));
 
-        div.querySelector('.remover-aluno').addEventListener('click', () => {
-            div.remove();
-            renumerarListaPadrao();
-        });
+                div.querySelector('.remover-aluno').addEventListener('click', () => {
+                    div.remove();
+                    if (genero === 'FEMININO') {
+                        renumerarListaGenero(listaFeminino, 'FEMININO');
+                    } else {
+                        renumerarListaGenero(listaMasculino, 'MASCULINO');
+                    }
+                });
 
         const inputNome = div.querySelector('.aluno-nome');
         inputNome.addEventListener('blur', () => {
