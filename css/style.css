@@ -405,7 +405,8 @@ h2 {
 }
 /* Checkbox AEE */
 .campo.aee {
-    justify-content: flex-end; /* alinha o wrapper na parte de baixo da célula */
+    justify-content: flex-end;
+    align-items: flex-end;       /* ✅ alinha o wrapper à direita */
 }
 
 .checkbox-aee {
