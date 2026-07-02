@@ -263,7 +263,14 @@ document.addEventListener('DOMContentLoaded', () => {
         inputMat.addEventListener('input', () => mascaraData(inputMat));
         inputNasc.addEventListener('input', () => mascaraData(inputNasc));
 
-        div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
+        div.querySelector('.remover-aluno').addEventListener('click', () => {
+            div.remove();
+            if (genero === 'FEMININO') {
+                renumerarListaGenero(listaFeminino, 'FEMININO');
+            } else {
+                renumerarListaGenero(listaMasculino, 'MASCULINO');
+            }
+        });
 
         const inputNome = div.querySelector('.aluno-nome');
         const inputId = div.querySelector('.aluno-identidade');
@@ -277,6 +284,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         return div;
+    }
+
+    // Renumera as linhas da lista padrão (coletivas/atletismo)
+    function renumerarListaPadrao() {
+        const linhas = listaAlunos.querySelectorAll('.aluno-linha');
+        linhas.forEach((linha, index) => {
+            const numero = index + 1;
+            const inputNome = linha.querySelector('.aluno-nome');
+            if (inputNome) {
+                inputNome.placeholder = `Nome do aluno ${numero}`;
+            }
+        });
+    }
+
+    // Renumera as linhas de um bloco de gênero específico
+    function renumerarListaGenero(container, genero) {
+        const linhas = container.querySelectorAll('.aluno-linha');
+        const generoTexto = genero === 'FEMININO' ? 'Feminino' : 'Masculino';
+        linhas.forEach((linha, index) => {
+            const numero = index + 1;
+            const inputNome = linha.querySelector('.aluno-nome');
+            if (inputNome) {
+                inputNome.placeholder = `Nome ${generoTexto} ${numero}`;
+            }
+        });
     }
 
     // Cria linha para os blocos de gênero (xadrez/tênis de mesa)
@@ -316,7 +348,10 @@ document.addEventListener('DOMContentLoaded', () => {
         inputMat.addEventListener('input', () => mascaraData(inputMat));
         inputNasc.addEventListener('input', () => mascaraData(inputNasc));
 
-        div.querySelector('.remover-aluno').addEventListener('click', () => div.remove());
+        div.querySelector('.remover-aluno').addEventListener('click', () => {
+            div.remove();
+            renumerarListaPadrao();
+        });
 
         const inputNome = div.querySelector('.aluno-nome');
         inputNome.addEventListener('blur', () => {
