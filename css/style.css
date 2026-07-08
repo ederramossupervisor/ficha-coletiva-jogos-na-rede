@@ -47,7 +47,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;          /* centraliza o texto */
-    gap: 15px;
+    gap: 10px;
     margin-bottom: 25px;
     font-size: 2em;
     font-weight: 700;
