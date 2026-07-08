@@ -1,6 +1,6 @@
 {
-  "name": "Ficha Coletiva Escolar",
-  "short_name": "Ficha Escolar",
+  "name": "Jogos na Rede - SRE Afonso Cláudio",
+  "short_name": "Jogos na Rede",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#2c3e50",
