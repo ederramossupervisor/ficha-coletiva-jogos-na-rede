@@ -57,11 +57,11 @@ h1 {
 }
 
 h1 img {
-    height: 2.5em;                   /* ícone bem maior */
+    height: 2.0em;                   /* ícone bem maior */
     width: auto;
     margin-left: auto;               /* empurra para a direita */
     vertical-align: middle;
-    order: 1;                        /* garante que fique depois do texto */
+    order: -1;                        /* garante que fique depois do texto */
 }
 
 /* Seções do formulário */
