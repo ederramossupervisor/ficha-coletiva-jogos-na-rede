@@ -41,13 +41,27 @@ body {
     transition: var(--transition);
 }
 
+/* Cabeçalho com ícone maior e à direita */
 h1 {
     color: var(--cor-azul);
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;          /* centraliza o texto */
+    gap: 15px;
     margin-bottom: 25px;
     font-size: 2em;
     font-weight: 700;
     letter-spacing: -0.5px;
+    text-align: center;
+    flex-wrap: wrap;
+}
+
+h1 img {
+    height: 2.5em;                   /* ícone bem maior */
+    width: auto;
+    margin-left: auto;               /* empurra para a direita */
+    vertical-align: middle;
+    order: 1;                        /* garante que fique depois do texto */
 }
 
 /* Seções do formulário */
@@ -319,6 +333,11 @@ h2 {
         font-size: 1.6em;
     }
 
+    /* Ícone do cabeçalho reduzido em telas menores */
+    h1 img {
+        height: 1.8em;
+    }
+
     /* Informações Gerais: uma coluna, largura total */
     .form-grid {
         grid-template-columns: 1fr;
@@ -402,11 +421,16 @@ h2 {
         background: var(--cor-rosa);
         font-size: 13px;
     }
+
+    h1 img {
+        height: 1.5em;          /* ainda menor em celulares */
+    }
 }
+
 /* Checkbox AEE */
 .campo.aee {
     justify-content: flex-end;
-    align-items: flex-end;       /* ✅ alinha o wrapper à direita */
+    align-items: flex-end;
 }
 
 .checkbox-aee {
@@ -426,19 +450,22 @@ h2 {
     cursor: pointer;
     margin: 0;
 }
+
 .blocos-genero {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
 }
+
 .bloco-feminino, .bloco-masculino {
-  flex: 1;
-  min-width: 300px;
-  background: #f8fafd;
-  border-radius: var(--radius);
-  padding: 15px;
+    flex: 1;
+    min-width: 300px;
+    background: #f8fafd;
+    border-radius: var(--radius);
+    padding: 15px;
 }
+
 .bloco-feminino h3, .bloco-masculino h3 {
-  color: var(--cor-azul);
-  margin-bottom: 10px;
+    color: var(--cor-azul);
+    margin-bottom: 10px;
 }
