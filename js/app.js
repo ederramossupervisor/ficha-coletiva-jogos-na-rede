@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "EEEFM Fazenda Camporês": "Emerson Ungarato", "EEEFM Fazenda Emílio Schroeder": "Jorge Schneider",
         "EEEFM Fioravante Caliman": "Celina Januário Moreira", "EEEFM Frederico Boldt": "David Felberg",
         "EEEFM Gisela Salloker Fayet": "Maxwel Augusto Neves", "EEEFM Graça Aranha": "Camilo Pauli Dominicini",
-        "EEEFM Joaquim Caetano de Paiva": "Miriam Klitzke Seibel", "EEEFM José Cupertino": "Cléria Pagotto Ronchi Zanelato",
+        "EEEFM Joaquim Caetano de Paiva": "Miriam Klitzke Seibel", "EEEFM José Cupertino": "Nilzeti Silva da Cruz Coutinho",
         "EEEFM José Giestas": "Gederson Vargas Dazilio", "EEEFM José Roberto Christo": "Andressa Silva Dias",
         "EEEFM Leogildo Severiano de Souza": "Adalberto Carlos Araújo Chaves", "EEEFM Luiz Jouffroy": "Nilza Abel Gumz",
         "EEEFM Maria de Abreu Alvim": "Maria das Graças Fabio Costa", "EEEFM Mário Bergamin": "CELINA JANUÁRIO MOREIRA",
