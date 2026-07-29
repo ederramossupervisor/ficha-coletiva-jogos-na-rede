@@ -533,13 +533,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Validação de mínimo para coletivas
+            // Validação de mínimo para coletivas (com aviso de exceção para escolas pequenas)
             if (categoria === 'coletiva') {
                 const mins = { 'Basquete': 8, 'Futsal': 10, 'Handebol': 10, 'Voleibol': 10 };
                 const modPrincipal = modalidade.split(' - ')[0];
                 if (alunos.length < mins[modPrincipal]) {
-                    alert(`Para ${modPrincipal} é necessário no mínimo ${mins[modPrincipal]} alunos.`);
-                    return;
+                    const confirmar = confirm(
+                        `O regulamento exige no mínimo ${mins[modPrincipal]} alunos para ${modPrincipal}.\n\n` +
+                        `Sua escola tem MENOS de 100 alunos no ensino médio?\n\n` +
+                        `Clique em OK para confirmar e prosseguir, ou Cancelar para ajustar a quantidade.`
+                    );
+                    if (!confirmar) {
+                        return; // usuário cancelou, interrompe o envio
+                    }
+                    // Se confirmou, continua normalmente (escola pequena, exceção do art. 14)
                 }
             }
 
