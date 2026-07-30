@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ficha-coletiva-v3';
+const CACHE_NAME = 'ficha-coletiva-v4';
 const urlsToCache = [
   './index.html',
   './css/style.css',
