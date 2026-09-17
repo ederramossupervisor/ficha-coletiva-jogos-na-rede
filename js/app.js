@@ -24,13 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
         "EEEFM Joaquim Caetano de Paiva": "Miriam Klitzke Seibel", "EEEFM José Cupertino": "Nilzeti Silva da Cruz Coutinho",
         "EEEFM José Giestas": "Gederson Vargas Dazilio", "EEEFM José Roberto Christo": "Andressa Silva Dias",
         "EEEFM Leogildo Severiano de Souza": "Adalberto Carlos Araújo Chaves", "EEEFM Luiz Jouffroy": "Nilza Abel Gumz",
-        "EEEFM Maria de Abreu Alvim": "Maria das Graças Fabio Costa", "EEEFM Mário Bergamin": "CELINA JANUÁRIO MOREIRA",
+        "EEEFM Maria de Abreu Alvim": "Maria das Graças Fabio Costa", "EE Mário Bergamin": "CELINA JANUÁRIO MOREIRA",
         "EEEFM Marlene Brandão": "Paulynne Ayres Tatagiba Gonçalves", "EEEFM Pedra Azul": "Elizabeth Drumond Ambrósio Filgueiras",
         "EEEFM Ponto do Alto": "Marcelo Ribett", "EEEFM Profª Aldy Soares Merçon Vargas": "Israel Augusto Moreira Borges",
         "EEEFM Prof Hermman Berger": "Eliane Raasch Bicalho", "EEEFM São Jorge": "Jormi Maria da Silva",
         "EEEFM São Luís": "Valdirene Mageski Cordeiro Magri", "EEEFM Teófilo Paulino": "Delfina Schneider Stein",
-        "EEEM Francisco Guilherme": "Jonatas André Drescher", "EEEF Ivana Casagrande Scabelo": "Maristela Broedel",
-        "EEEF Severino Paste": "Maristela Broedel", "EEEM Mata fria": "Jonatas André Drescher",
+        "EEEM Francisco Guilherme": "Jonatas André Drescher", "EE Ivana Casagrande Scabelo": "Maristela Broedel",
+        "EE Severino Paste": "Maristela Broedel", "EEEM Mata fria": "Jonatas André Drescher",
         "EEEM Sobreiro": "Jonatas André Drescher"
     };
 
