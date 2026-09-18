@@ -580,7 +580,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Erro na geração do PDF');
             }
 
-            const blob = await response.blob();
+            // O backend (Apps Script) retorna o PDF como uma string em base64
+            // (texto puro), então não dá para usar response.blob() direto —
+            // isso geraria um arquivo .pdf que na verdade contém texto base64
+            // e falha ao abrir. É preciso decodificar o base64 para bytes
+            // binários antes de criar o Blob.
+            const base64String = await response.text();
+            const byteCharacters = atob(base64String);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
