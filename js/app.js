@@ -586,7 +586,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // e falha ao abrir. É preciso decodificar o base64 para bytes
             // binários antes de criar o Blob.
             const base64String = await response.text();
-            const byteCharacters = atob(base64String);
+
+            let byteCharacters;
+            try {
+                byteCharacters = atob(base64String);
+            } catch (decodeError) {
+                // A resposta não é um base64 válido: o back-end (Apps Script)
+                // não gerou o PDF e provavelmente devolveu uma mensagem de
+                // erro em texto/JSON. Tenta extrair essa mensagem para
+                // mostrar o motivo real, em vez de um erro genérico.
+                console.error('Resposta do servidor não é um PDF válido:', base64String);
+                let mensagemServidor = base64String;
+                try {
+                    const jsonErro = JSON.parse(base64String);
+                    mensagemServidor = jsonErro.error || jsonErro.message || base64String;
+                } catch (parseError) {
+                    // não era JSON, usa o texto puro mesmo
+                }
+                throw new Error('O servidor não conseguiu gerar o PDF: ' + mensagemServidor);
+            }
+
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) {
                 byteNumbers[i] = byteCharacters.charCodeAt(i);
@@ -618,7 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.URL.revokeObjectURL(url);
             statusDiv.textContent = '✅ PDF gerado com sucesso! O download foi iniciado.';
         } catch (error) {
-            statusDiv.textContent = '❌ Erro de conexão com o servidor. Verifique se a Cloud Function está ativa.';
+            statusDiv.textContent = '❌ ' + (error.message || 'Erro de conexão com o servidor. Verifique se a Cloud Function está ativa.');
             console.error(error);
         }
     });
