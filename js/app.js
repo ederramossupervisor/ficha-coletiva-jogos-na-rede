@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = formatado;
     }
 
-    async function buscarDadosAluno(nome, escola, linhaDiv) {
+    async function buscarDadosAluno(nome, escola, linhaDiv, tentativa = 1) {
         if (!nome.trim() || !escola) return;
         const idInput = linhaDiv.querySelector('.aluno-identidade');
         const matInput = linhaDiv.querySelector('.aluno-data-matricula');
@@ -204,6 +204,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome: nome.trim(), escola: escola })
             });
+
+            if (!response.ok) {
+                // O proxy (Cloud Run) às vezes retorna 500 na primeira
+                // chamada depois de ficar inativo (cold start). Tenta de
+                // novo automaticamente uma vez antes de desistir.
+                if (tentativa === 1) {
+                    console.warn(`Lookup falhou com status ${response.status}, tentando novamente...`);
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    return buscarDadosAluno(nome, escola, linhaDiv, tentativa + 1);
+                }
+                throw new Error(`O servidor de busca respondeu com erro ${response.status}.`);
+            }
+
             const result = await response.json();
             if (result.success) {
                 idInput.value = result.id;
@@ -223,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             idInput.value = '';
             idInput.style.color = 'var(--cor-texto)';
             console.error('Erro na busca:', error);
-            alert('Erro ao buscar dados. Tente novamente.');
+            alert('Erro ao buscar dados. O servidor pode estar iniciando — aguarde alguns segundos e tente novamente.');
         }
     }
 
