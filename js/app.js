@@ -593,37 +593,64 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Erro na geração do PDF');
             }
 
-            // O backend (Apps Script) retorna o PDF como uma string em base64
-            // (texto puro), então não dá para usar response.blob() direto —
-            // isso geraria um arquivo .pdf que na verdade contém texto base64
-            // e falha ao abrir. É preciso decodificar o base64 para bytes
-            // binários antes de criar o Blob.
-            const base64String = await response.text();
+            // O back-end (Apps Script) deveria sempre retornar o PDF como uma
+            // string em base64 puro (texto), mas na prática o proxy Cloud Run
+            // às vezes entrega esse mesmo conteúdo de formas diferentes:
+            // - texto base64 normal (caso esperado)
+            // - os bytes do PDF já "crus" (binário)
+            // - uma mensagem de erro (texto/JSON) quando a geração falha
+            // Por isso lemos a resposta como bytes brutos (arrayBuffer) e
+            // detectamos qual desses três casos é, em vez de assumir texto
+            // UTF-8 direto — ler bytes binários como texto UTF-8 corrompe
+            // os dados e foi a causa dos erros anteriores (atob e "caracteres
+            // fora do intervalo Latin1").
+            const rawBuffer = await response.arrayBuffer();
+            const rawBytes = new Uint8Array(rawBuffer);
 
-            let byteCharacters;
-            try {
-                byteCharacters = atob(base64String);
-            } catch (decodeError) {
-                // A resposta não é um base64 válido: o back-end (Apps Script)
-                // não gerou o PDF e provavelmente devolveu uma mensagem de
-                // erro em texto/JSON. Tenta extrair essa mensagem para
-                // mostrar o motivo real, em vez de um erro genérico.
-                console.error('Resposta do servidor não é um PDF válido:', base64String);
-                let mensagemServidor = base64String;
-                try {
-                    const jsonErro = JSON.parse(base64String);
-                    mensagemServidor = jsonErro.error || jsonErro.message || base64String;
-                } catch (parseError) {
-                    // não era JSON, usa o texto puro mesmo
+            let byteArray;
+
+            // Caso 1: já são os bytes de um PDF (assinatura "%PDF").
+            const assinaturaPdf = [0x25, 0x50, 0x44, 0x46]; // %PDF
+            const jaEhPdf = assinaturaPdf.every((b, i) => rawBytes[i] === b);
+
+            if (jaEhPdf) {
+                byteArray = rawBytes;
+            } else {
+                // Caso 2 ou 3: interpreta os bytes como texto Latin1 (não
+                // UTF-8) para não corromper nada, e decide se é base64 ou
+                // uma mensagem de erro.
+                let textoLatin1 = '';
+                for (let i = 0; i < rawBytes.length; i++) {
+                    textoLatin1 += String.fromCharCode(rawBytes[i]);
                 }
-                throw new Error('O servidor não conseguiu gerar o PDF: ' + mensagemServidor);
+                const pareceBase64 = /^[A-Za-z0-9+/=\s]+$/.test(textoLatin1) && textoLatin1.trim().length > 0;
+
+                if (pareceBase64) {
+                    // Caso 2: texto base64 normal.
+                    const byteCharacters = atob(textoLatin1.replace(/\s/g, ''));
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    byteArray = new Uint8Array(byteNumbers);
+                } else {
+                    // Caso 3: não é PDF nem base64 — provavelmente uma
+                    // mensagem de erro do servidor (texto ou JSON), ou dados
+                    // corrompidos/comprimidos de forma inesperada.
+                    const textoUtf8 = new TextDecoder('utf-8', { fatal: false }).decode(rawBytes);
+                    console.error('Resposta do servidor não é um PDF válido. Bytes (Latin1):', textoLatin1);
+                    console.error('Resposta do servidor não é um PDF válido. Texto (UTF-8):', textoUtf8);
+                    let mensagemServidor = textoUtf8;
+                    try {
+                        const jsonErro = JSON.parse(textoUtf8);
+                        mensagemServidor = jsonErro.error || jsonErro.message || textoUtf8;
+                    } catch (parseError) {
+                        // não era JSON, usa o texto puro mesmo
+                    }
+                    throw new Error('O servidor não conseguiu gerar o PDF: ' + mensagemServidor);
+                }
             }
 
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
