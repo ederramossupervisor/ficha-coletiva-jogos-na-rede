@@ -51,6 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form-ficha');
     const statusDiv = document.getElementById('status-mensagem');
 
+    // Fichas salvas na planilha
+    const secaoFichasSalvas = document.getElementById('secao-fichas-salvas');
+    const selectFichasSalvas = document.getElementById('select-fichas-salvas');
+    const btnCarregarFicha = document.getElementById('btn-carregar-ficha');
+    const btnExcluirFicha = document.getElementById('btn-excluir-ficha');
+
     // Novos elementos para Xadrez/Tênis de Mesa
     const secaoAlunosGenero = document.getElementById('secao-alunos-genero');
     const listaFeminino = document.getElementById('lista-feminino');
@@ -108,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectEscola.addEventListener('change', () => {
         inputDiretor.value = diretores[selectEscola.value] || '';
+        carregarFichasDaEscola();
     });
     
  selectModalidade.addEventListener('change', () => {
@@ -284,6 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputNome = div.querySelector('.aluno-nome');
         const inputId = div.querySelector('.aluno-identidade');
         inputNome.addEventListener('blur', () => {
+            // Ficha carregada do histórico: não busca de novo se o nome não mudou
+            if (div.dataset.nomeRestaurado && inputNome.value.trim() === div.dataset.nomeRestaurado) return;
             const escola = selectEscola.value;
             if (!escola) {
                 alert('Selecione a escola antes de preencher o nome do aluno.');
@@ -368,6 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const inputNome = div.querySelector('.aluno-nome');
         inputNome.addEventListener('blur', () => {
+            // Ficha carregada do histórico: não busca de novo se o nome não mudou
+            if (div.dataset.nomeRestaurado && inputNome.value.trim() === div.dataset.nomeRestaurado) return;
             const escola = selectEscola.value;
             if (!escola) {
                 alert('Selecione a escola antes de preencher o nome do aluno.');
@@ -414,9 +425,184 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ===== Fichas salvas na planilha (via mesmo backend/proxy da ficha) =====
+    // O servidor (Apps Script) salva a ficha sozinho quando o PDF é gerado.
+    // Aqui o app só LISTA e EXCLUI as fichas guardadas na planilha.
+
+    // Fichas da escola atualmente selecionada: [{ chave, salvoEm, payload }]
+    let fichasDaEscola = [];
+
+    async function chamarBackend(dados, tentativa = 1) {
+        try {
+            const response = await fetch(CLOUD_FUNCTION_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            const texto = await response.text();
+            let resultado;
+            try {
+                resultado = JSON.parse(texto);
+            } catch (e) {
+                throw new Error('Resposta inesperada do servidor: ' + texto.slice(0, 200));
+            }
+            if (!resultado.success) throw new Error(resultado.error || 'Erro desconhecido no servidor');
+            return resultado;
+        } catch (erro) {
+            // O proxy (Cloud Run) às vezes falha na primeira chamada depois de
+            // ficar inativo (cold start): tenta mais uma vez.
+            if (tentativa === 1) {
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                return chamarBackend(dados, tentativa + 1);
+            }
+            throw erro;
+        }
+    }
+
+    // Identifica a ficha por escola + modalidade + gênero (igual ao servidor):
+    // ao gerar de novo a mesma ficha, ela substitui a anterior.
+    function chaveDaFicha(payload) {
+        let genero;
+        if (payload.alunosFeminino || payload.alunosMasculino) {
+            genero = 'FM';
+        } else {
+            genero = (payload.generoFeminino ? 'F' : '') + (payload.generoMasculino ? 'M' : '');
+        }
+        return [payload.escola, payload.modalidade, genero].join('|');
+    }
+
+    function rotuloDaFicha(ficha) {
+        const p = ficha.payload;
+        let genero;
+        if (p.alunosFeminino || p.alunosMasculino) {
+            genero = 'Fem. e Masc.';
+        } else {
+            genero = [p.generoFeminino ? 'Fem.' : '', p.generoMasculino ? 'Masc.' : ''].filter(Boolean).join(' e ');
+        }
+        const d = new Date(ficha.salvoEm);
+        const quando = d.toLocaleDateString('pt-BR') + ' ' +
+            d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        const prof = p.professor ? ` — Prof. ${p.professor}` : '';
+        return `${p.modalidade}${genero ? ' (' + genero + ')' : ''}${prof} — salva em ${quando}`;
+    }
+
+    function atualizarListaFichasSalvas(chaveSelecionada) {
+        selectFichasSalvas.innerHTML = '';
+        fichasDaEscola.forEach(ficha => {
+            const opt = document.createElement('option');
+            opt.value = ficha.chave;
+            opt.textContent = rotuloDaFicha(ficha);
+            selectFichasSalvas.appendChild(opt);
+        });
+        if (chaveSelecionada) selectFichasSalvas.value = chaveSelecionada;
+        secaoFichasSalvas.style.display = fichasDaEscola.length ? 'block' : 'none';
+    }
+
+    // Busca na planilha as fichas da escola selecionada
+    async function carregarFichasDaEscola() {
+        const escola = selectEscola.value;
+        fichasDaEscola = [];
+        atualizarListaFichasSalvas();
+        if (!escola) return;
+        try {
+            const resultado = await chamarBackend({ action: 'listarFichas', escola: escola });
+            if (selectEscola.value !== escola) return; // trocou de escola durante a busca
+            fichasDaEscola = resultado.fichas || [];
+            atualizarListaFichasSalvas();
+        } catch (e) {
+            console.warn('Não foi possível buscar as fichas salvas:', e);
+        }
+    }
+
+    // Depois de gerar o PDF (o servidor já salvou na planilha), atualiza a lista na tela
+    function registrarFichaNaLista(payload) {
+        if (selectEscola.value !== payload.escola) return;
+        const chave = chaveDaFicha(payload);
+        fichasDaEscola = fichasDaEscola.filter(f => f.chave !== chave);
+        fichasDaEscola.unshift({ chave: chave, salvoEm: new Date().toISOString(), payload: payload });
+        atualizarListaFichasSalvas(chave);
+    }
+
+    function preencherLinha(div, aluno) {
+        div.querySelector('.aluno-nome').value = aluno.nome || '';
+        div.querySelector('.aluno-documento').value = aluno.documento || '';
+        div.querySelector('.aluno-data-matricula').value = aluno.dataMatricula || '';
+        div.querySelector('.aluno-identidade').value = aluno.identidade || '';
+        div.querySelector('.aluno-data-nascimento').value = aluno.dataNascimento || '';
+        div.querySelector('.aluno-publico-aee').checked = aluno.publicoAEE === 'X';
+        div.dataset.nomeRestaurado = (aluno.nome || '').trim();
+    }
+
+    function carregarFicha(payload) {
+        // Modalidade primeiro (monta a interface certa)
+        selectModalidade.value = payload.modalidade;
+        selectModalidade.dispatchEvent(new Event('change'));
+
+        // Escola e diretor (sem disparar de novo a busca das fichas)
+        selectEscola.value = payload.escola;
+        inputDiretor.value = diretores[payload.escola] || '';
+
+        document.getElementById('professor').value = payload.professor || '';
+        document.getElementById('auxiliar').value = payload.auxiliarTecnico || '';
+
+        const categoria = getCategoria();
+        if (categoria === 'xadrez' || categoria === 'tenis_mesa') {
+            listaFeminino.innerHTML = '';
+            listaMasculino.innerHTML = '';
+            (payload.alunosFeminino || []).forEach((aluno, i) => {
+                const linha = criarLinhaAlunoGenero('FEMININO', i + 1);
+                preencherLinha(linha, aluno);
+                listaFeminino.appendChild(linha);
+            });
+            (payload.alunosMasculino || []).forEach((aluno, i) => {
+                const linha = criarLinhaAlunoGenero('MASCULINO', i + 1);
+                preencherLinha(linha, aluno);
+                listaMasculino.appendChild(linha);
+            });
+        } else {
+            listaAlunos.innerHTML = '';
+            (payload.alunos || []).forEach((aluno, i) => {
+                const linha = criarLinhaAluno(i + 1);
+                preencherLinha(linha, aluno);
+                listaAlunos.appendChild(linha);
+            });
+            checkFeminino.checked = !!payload.generoFeminino;
+            checkMasculino.checked = !!payload.generoMasculino;
+        }
+
+        // A data continua sendo a de hoje (definida no início da página)
+        statusDiv.textContent = '✏️ Ficha carregada. Faça as alterações e clique em "Gerar Ficha".';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    btnCarregarFicha.addEventListener('click', () => {
+        const ficha = fichasDaEscola.find(f => f.chave === selectFichasSalvas.value);
+        if (!ficha) {
+            alert('Nenhuma ficha selecionada.');
+            return;
+        }
+        carregarFicha(ficha.payload);
+    });
+
+    btnExcluirFicha.addEventListener('click', async () => {
+        const ficha = fichasDaEscola.find(f => f.chave === selectFichasSalvas.value);
+        if (!ficha) return;
+        if (!confirm('Excluir esta ficha da planilha?\n\n' + rotuloDaFicha(ficha))) return;
+        try {
+            await chamarBackend({ action: 'excluirFicha', chave: ficha.chave });
+            fichasDaEscola = fichasDaEscola.filter(f => f.chave !== ficha.chave);
+            atualizarListaFichasSalvas();
+        } catch (e) {
+            console.error('Erro ao excluir a ficha:', e);
+            alert('Não foi possível excluir a ficha. Tente novamente.');
+        }
+    });
+
     // Inicializa a interface com 3 alunos padrão (coletivas)
     // O evento change da modalidade será disparado programaticamente para configurar a interface inicial
     selectModalidade.dispatchEvent(new Event('change'));
+    atualizarListaFichasSalvas();
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -675,6 +861,8 @@ document.addEventListener('DOMContentLoaded', () => {
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
+            // O servidor já guardou a ficha na planilha: atualiza a lista na tela
+            registrarFichaNaLista(payload);
             statusDiv.textContent = '✅ PDF gerado com sucesso! O download foi iniciado.';
         } catch (error) {
             statusDiv.textContent = '❌ ' + (error.message || 'Erro de conexão com o servidor. Verifique se a Cloud Function está ativa.');
