@@ -17,6 +17,19 @@
         </h1>
 
         <form id="form-ficha" novalidate>
+            <!-- Fichas salvas na planilha (aparece depois de escolher a escola) -->
+            <section class="form-section" id="secao-fichas-salvas" style="display: none;">
+                <h2>Fichas salvas desta escola</h2>
+                <div class="form-group">
+                    <label for="select-fichas-salvas">Escolha uma ficha já gerada para editar:</label>
+                    <select id="select-fichas-salvas"></select>
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;">
+                    <button type="button" id="btn-carregar-ficha" class="btn btn-primary">✏️ Carregar para editar</button>
+                    <button type="button" id="btn-excluir-ficha" class="btn btn-secondary">Excluir</button>
+                </div>
+            </section>
+
             <!-- Dados Gerais -->
             <section class="form-section">
                 <h2>Informações Gerais</h2>
